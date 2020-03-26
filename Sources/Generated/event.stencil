@@ -1,0 +1,209 @@
+// swiftlint:disable all
+// ！！！该文件代码为自动生成！！！
+// 如果埋点有更新，需更新埋点文件 event.yml
+
+{% if files %}
+{% set accessModifier %}{% if param.publicAccess %}public{% else %}internal{% endif %}{% endset %}
+{% set documentPrefix %}{{param.documentName|default:"Document"}}{% endset %}
+import Foundation
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable file_length
+
+{% macro fileCaseBlock file %}
+  {% call documentCaseBlock file file.documents.first %}
+{% endmacro %}
+{% macro documentCaseBlock file document %}
+  {% set rootType %}{% call typeBlock document.metadata %}{% endset %}
+  {% if document.metadata.type == "Array" %}
+  {{accessModifier}} static let items: {{rootType}} = {{ document.data }}
+  {% elif document.metadata.type == "Dictionary" %}
+  {% for key,value in document.metadata.properties %}
+  {% call propertyCaseBlock key value document.data %}
+  {% endfor %}
+  {% else %}
+  {{accessModifier}} static let value: {{rootType}} = {% call valueBlock document.data document.metadata %}
+  {% endif %}
+{% endmacro %}
+{% macro typeBlock metadata %}{% filter removeNewlines:"leading" %}
+  {% if metadata.type == "Array" %}
+    [{% call typeBlock metadata.element %}]
+  {% elif metadata.type == "Dictionary" %}
+    [String: Any]
+  {% elif metadata.type == "Optional" %}
+    Any?
+  {% else %}
+    {{metadata.type}}
+  {% endif %}
+{% endfilter %}{% endmacro %}
+{% macro propertyCaseBlock key metadata data %}{% filter removeNewlines:"leading" %}
+  {% set propertyName %}{{key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}{% endset %}
+  {% set propertyType %}{% call typeBlock metadata %}{% endset %}
+  case {{propertyName}}{% call valueNameBlock data[key] metadata %}
+{% endfilter %}{% endmacro %}
+{% macro valueNameBlock value metadata %}{% filter removeNewlines:"leading" %}
+  {% if metadata.type == "String" %}
+    "{{ value }}"
+  {% elif metadata.type == "Optional" %}
+    
+  {% elif metadata.type == "Array" and metadata.element.items %}
+    ({% for itemMetadata in metadata.element.items %}
+      {% call valueBlock value[forloop.counter0] itemMetadata %}
+      {% if not forloop.last %}, {% endif %}
+    {% endfor %})
+  {% elif metadata.type == "Dictionary" %}
+    ({% for key,value in value %}
+      {% set keyName %}{{key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}{% endset %}
+      {{keyName}}: {% call typeBlock metadata.properties[key] %}
+      {% if not forloop.last %}, {% endif %}
+    {% empty %}
+      :
+    {% endfor %})
+  {% else %}
+    {{ value }}
+  {% endif %}
+{% endfilter %}{% endmacro %}
+{% macro valueBlock value metadata %}{% filter removeNewlines:"leading" %}
+  {% if metadata.type == "String" %}
+    "{{ value }}"
+  {% elif metadata.type == "Optional" %}
+    nil
+  {% elif metadata.type == "Array" and metadata.element.items %}
+    [{% for itemMetadata in metadata.element.items %}
+      {% call valueBlock value[forloop.counter0] itemMetadata %}
+      {% if not forloop.last %}, {% endif %}
+    {% endfor %}]
+  {% elif metadata.type == "Dictionary" %}
+    [{% for key,value in value %}
+      "{{key}}": {% call valueBlock value metadata.properties[key] %}
+      {% if not forloop.last %}, {% endif %}
+    {% empty %}
+      :
+    {% endfor %}]
+  {% else %}
+    {{ value }}
+  {% endif %}
+{% endfilter %}{% endmacro %}
+{% macro fileNameBlock file %}
+  {% call documentNameBlock file file.documents.first %}
+{% endmacro %}
+{% macro documentNameBlock file document %}
+  {% set rootType %}{% call typeBlock document.metadata %}{% endset %}
+  {% if document.metadata.type == "Array" %}
+  {{accessModifier}} static let items: {{rootType}} = {{ document.data }}
+  {% elif document.metadata.type == "Dictionary" %}
+  {% for key,value in document.metadata.properties %}
+  {% call propertyNameBlock key value document.data %}
+  {% endfor %}
+  {% else %}
+  {{accessModifier}} static let value: {{rootType}} = {% call valueBlock document.data document.metadata %}
+  {% endif %}
+{% endmacro %}
+{% macro propertyNameBlock key metadata data %}{% filter removeNewlines:"leading" %}
+  {% set propertyName %}{{key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}{% endset %}
+  {% set propertyType %}{% call typeBlock metadata %}{% endset %}
+  case .{{propertyName}}: return "{{key}}"
+{% endfilter %}{% endmacro %}
+{% macro fileParamsBlock file %}
+  {% call documentParamsBlock file file.documents.first %}
+{% endmacro %}
+{% macro documentParamsBlock file document %}
+  {% set rootType %}{% call typeBlock document.metadata %}{% endset %}
+  {% if document.metadata.type == "Array" %}
+  {{accessModifier}} static let items: {{rootType}} = {{ document.data }}
+  {% elif document.metadata.type == "Dictionary" %}
+  {% for key,value in document.metadata.properties %}
+  {% call propertyParamsBlock key value document.data %}
+  {% endfor %}
+  {% else %}
+  {{accessModifier}} static let value: {{rootType}} = {% call valueBlock document.data document.metadata %}
+  {% endif %}
+{% endmacro %}
+{% macro typeBlock metadata %}{% filter removeNewlines:"leading" %}
+  {% if metadata.type == "Array" %}
+    [{% call typeBlock metadata.element %}]
+  {% elif metadata.type == "Dictionary" %}
+    [String: Any]
+  {% elif metadata.type == "Optional" %}
+    Any?
+  {% else %}
+    {{metadata.type}}
+  {% endif %}
+{% endfilter %}{% endmacro %}
+{% macro propertyParamsBlock key metadata data %}{% filter removeNewlines:"leading" %}
+  {% set propertyName %}{{key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}{% endset %}
+  {% set propertyType %}{% call typeParamsBlock data[key] metadata %}{% endset %}
+  {% if propertyType %}
+    case let .{{propertyName}}{{propertyType}}: return {% call valueParamsBlock data[key] metadata %}
+  {% else %}
+    case .{{propertyName}}: return nil
+  {% endif %}
+{% endfilter %}{% endmacro %}
+{% macro typeParamsBlock value metadata %}{% filter removeNewlines:"leading" %}
+  {% if metadata.type == "String" %}
+    "{{ value }}"
+  {% elif metadata.type == "Optional" %}
+    
+  {% elif metadata.type == "Array" and metadata.element.items %}
+    ({% for itemMetadata in metadata.element.items %}
+      {% call valueBlock value[forloop.counter0] itemMetadata %}
+      {% if not forloop.last %}, {% endif %}
+    {% endfor %})
+  {% elif metadata.type == "Dictionary" %}
+    ({% for key,value in value %}
+      {% set keyName %}{{key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}{% endset %}
+      {{keyName}}
+      {% if not forloop.last %}, {% endif %}
+    {% empty %}
+      :
+    {% endfor %})
+  {% else %}
+    {{ value }}
+  {% endif %}
+{% endfilter %}{% endmacro %}
+{% macro valueParamsBlock value metadata %}{% filter removeNewlines:"leading" %}
+  {% if metadata.type == "String" %}
+    "{{ value }}"
+  {% elif metadata.type == "Optional" %}
+    nil
+  {% elif metadata.type == "Array" and metadata.element.items %}
+    [{% for itemMetadata in metadata.element.items %}
+      {% call valueBlock value[forloop.counter0] itemMetadata %}
+      {% if not forloop.last %}, {% endif %}
+    {% endfor %}]
+  {% elif metadata.type == "Dictionary" %}
+    [{% for key,value in value %}
+      {% set valueName %}{{key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}{% endset %}
+      "{{key}}": {{valueName}}
+      {% if not forloop.last %}, {% endif %}
+    {% empty %}
+      :
+    {% endfor %}]
+  {% else %}
+    {{ value }}
+  {% endif %}
+{% endfilter %}{% endmacro %}
+
+// swiftlint:disable identifier_name line_length number_separator type_body_length
+{{accessModifier}} enum {{param.enumName|default:"Event"}} {
+  {% filter indent:2 %}{% call fileCaseBlock files.first %}{% endfilter %}
+}
+
+extension {{param.enumName|default:"Event"}}: EventType {
+
+    public func name(for provider: ProviderType) -> String? {
+        switch self {
+        {% filter indent:6 %}{% call fileNameBlock files.first %}{% endfilter %}
+        }
+    }
+
+    public func parameters(for provider: ProviderType) -> [String: Any]? {
+        switch self {
+        {% filter indent:6 %}{% call fileParamsBlock files.first %}{% endfilter %}
+        }
+    }
+}
+// swiftlint:enable identifier_name line_length number_separator type_body_length
+{% else %}
+// No files found
+{% endif %}

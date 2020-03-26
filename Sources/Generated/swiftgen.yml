@@ -1,0 +1,8 @@
+yaml:
+  inputs: event.yml
+  outputs:
+    templatePath: event.stencil
+    output: Event.swift
+    params:
+      publicAccess: public
+        

@@ -1,0 +1,32 @@
+#
+# 埋点文档
+#
+# 格式说明：(⚠️空格敏感⚠️, 缩进为2个空格！！)
+# [~] 代表没有参数
+# [0] 代表参数类型为 Int
+# [0.0] 代表参数类型为 Double
+# [str] 代表参数类型为 String
+#
+# event1: ~
+#
+# event2:
+#   params1: 0
+#   params2: 0.0
+#   params3: ""
+#
+
+login_page_show: ~
+    
+send_sms:
+  is_retake: 0
+
+send_sms_error:
+  error_code: str
+  error_info: str
+
+home_page_show:
+  is_login: 0
+  icon_operation_id: 0
+
+user_logout: ~
+

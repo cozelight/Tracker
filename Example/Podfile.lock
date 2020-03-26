@@ -1,0 +1,23 @@
+PODS:
+  - SwiftGen (6.1.0)
+  - Tracker (0.0.1)
+
+DEPENDENCIES:
+  - SwiftGen (~> 6.0)
+  - Tracker (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - SwiftGen
+
+EXTERNAL SOURCES:
+  Tracker:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  SwiftGen: f872ca75cbd17bf7103c17f13dcfa0d9a15667b0
+  Tracker: 07917b360a2ac2dccf83c96cc278bfbefa1e15be
+
+PODFILE CHECKSUM: 4097fbc284c604c127bd6561622ff6337620783f
+
+COCOAPODS: 1.8.4
