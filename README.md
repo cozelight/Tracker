@@ -1,4 +1,6 @@
-#Tracker
+# Tracker
+
+轻量级打点框架
 
 ### 特性介绍
 
@@ -26,7 +28,7 @@
 
 示例：
 
-```
+```yaml
 # 埋点 event1，没有参数
 event1: ~
 # 埋点 event2，参数为 [params1: Int, params2: Double, params3: String]
@@ -40,14 +42,14 @@ event2:
 
 调用 Tracker.log(event)，传递相应的埋点对象 Event 即可
 
-```
+```swift
 Tracker.log(
   .bookmarkChange(
     changeType: "",
     isLogin: 0,
     isVideo: 0,
     itemId: ""
- ))
+))
 ```
 
 > **注意！！！ Tracker.log(event) 方式打点没有带公参（page、fromPage）**
@@ -56,7 +58,7 @@ Tracker.log(
 
 以下方法：
 
-```
+```swift
 /// 上报埋点
 /// - Parameters:
 ///  - event: 埋点事件
@@ -74,7 +76,7 @@ TrackerPageabel 协议继承自 TrackerTransferable 协议。
 
 以下为该协议声明：
 
-```
+```swift
 public protocol TrackerTransferable {
   /// 来源埋点数据
   var fromEvent: TrackerEvent? { get set }
@@ -94,11 +96,12 @@ public protocol TrackerTransferable {
 >
 > 建议在 Base 类，统一处理
 
-```
+```swift
 override open func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
-        if var toTracker = viewControllerToPresent as? TrackerTransferable {
-            toTracker.fromEvent = event
-        }
-        super.present(viewControllerToPresent, animated: flag, completion: completion)
-    }
+	if var toTracker = viewControllerToPresent as? TrackerTransferable {
+		toTracker.fromEvent = event
+	}
+	super.present(viewControllerToPresent, animated: flag, completion: completion)
+}
 ```
+
